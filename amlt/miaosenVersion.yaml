@@ -1,0 +1,345 @@
+description: clean data
+
+target:
+  service: sing
+  name: msrresrchvc
+
+environment:
+  image: amlt-sing/datacopy-adls #image: zeliu98/pytorch:pytorch1.8.1-py38-cuda11.3-cudnn820-openmpi-mmcv-apex-timm   #
+  setup:
+    - python -m pip install --upgrade pip --user
+    - pip install wget --user
+    - pip install numpy --user
+    - pip install re --user
+    - pip install gzip --user
+    - pip install tqdm --user
+    - pip install langdetect --user
+    - pip install nltk --user
+    - pip install ftfy --user
+    - pip install fasttext --user
+    - pip install spacy --user
+code:
+  # local directory of the code. this will be uploaded to the server.
+  # $CONFIG_DIR is expanded to the directory of this config file
+  local_dir: $CONFIG_DIR/
+
+storage:
+  # storage account and container where the ImageNet tar balls are contained
+  output:
+    storage_account_name: vlpretraineastus
+    container_name: nlp-data
+    mount_dir: /output
+
+jobs:
+ - name: CC-MAIN-2016-36
+   sku: 8C64
+   priority: High
+   execution_mode: basic
+   azml_int: True
+   command: 
+   - python get_data_and_first_clean.py --path-id CC-MAIN-2016-36 --process-num 300 --output-dir /output/common_crawl
+   submit_args:
+      env:
+       {
+         SHARED_MEMORY_PERCENT: 1.0,
+       }
+ - name: CC-MAIN-2017-13
+   sku: 8C64
+   priority: High
+   execution_mode: basic
+   azml_int: True
+   command: 
+   - python get_data_and_first_clean.py --path-id CC-MAIN-2017-13 --process-num 300 --output-dir /output/common_crawl
+   submit_args:
+      env:
+       {
+         SHARED_MEMORY_PERCENT: 1.0,
+       }
+ - name: CC-MAIN-2019-51
+   sku: 8C64
+   priority: High
+   execution_mode: basic
+   azml_int: True
+   command: 
+   - python get_data_and_first_clean.py --path-id CC-MAIN-2019-51 --process-num 300 --output-dir /output/common_crawl
+   submit_args:
+      env:
+       {
+         SHARED_MEMORY_PERCENT: 1.0,
+       }
+ - name: CC-MAIN-2020-05
+   sku: 8C64
+   priority: High
+   execution_mode: basic
+   azml_int: True
+   command: 
+   - python get_data_and_first_clean.py --path-id CC-MAIN-2020-05 --process-num 300 --output-dir /output/common_crawl
+   submit_args:
+      env:
+       {
+         SHARED_MEMORY_PERCENT: 1.0,
+       }
+ - name: CC-MAIN-2020-10
+   sku: 8C64
+   priority: High
+   execution_mode: basic
+   azml_int: True
+   command: 
+   - python get_data_and_first_clean.py --path-id CC-MAIN-2020-10 --process-num 300 --output-dir /output/common_crawl
+   submit_args:
+      env:
+       {
+         SHARED_MEMORY_PERCENT: 1.0,
+       }
+ - name: CC-MAIN-2020-16
+   sku: 8C64
+   priority: High
+   execution_mode: basic
+   azml_int: True
+   command: 
+   - python get_data_and_first_clean.py --path-id CC-MAIN-2020-16 --process-num 300 --output-dir /output/common_crawl
+   submit_args:
+      env:
+       {
+         SHARED_MEMORY_PERCENT: 1.0,
+       }
+ - name: CC-MAIN-2020-24
+   sku: 8C64
+   priority: High
+   execution_mode: basic
+   azml_int: True
+   command: 
+   - python get_data_and_first_clean.py --path-id CC-MAIN-2020-24 --process-num 300 --output-dir /output/common_crawl
+   submit_args:
+      env:
+       {
+         SHARED_MEMORY_PERCENT: 1.0,
+       }
+ - name: CC-MAIN-2020-29
+   sku: 8C64
+   priority: High
+   execution_mode: basic
+   azml_int: True
+   command: 
+   - python get_data_and_first_clean.py --path-id CC-MAIN-2020-29 --process-num 300 --output-dir /output/common_crawl
+   submit_args:
+      env:
+       {
+         SHARED_MEMORY_PERCENT: 1.0,
+       }
+ - name: CC-MAIN-2020-34
+   sku: 8C64
+   priority: High
+   execution_mode: basic
+   azml_int: True
+   command: 
+   - python get_data_and_first_clean.py --path-id CC-MAIN-2020-34 --process-num 300 --output-dir /output/common_crawl
+   submit_args:
+      env:
+       {
+         SHARED_MEMORY_PERCENT: 1.0,
+       }
+ - name: CC-MAIN-2020-40
+   sku: 8C64
+   priority: High
+   execution_mode: basic
+   azml_int: True
+   command: 
+   - python get_data_and_first_clean.py --path-id CC-MAIN-2020-40 --process-num 300 --output-dir /output/common_crawl
+   submit_args:
+      env:
+       {
+         SHARED_MEMORY_PERCENT: 1.0,
+       }
+ - name: CC-MAIN-2020-45
+   sku: 8C64
+   priority: High
+   execution_mode: basic
+   azml_int: True
+   command: 
+   - python get_data_and_first_clean.py --path-id CC-MAIN-2020-45 --process-num 300 --output-dir /output/common_crawl
+   submit_args:
+      env:
+       {
+         SHARED_MEMORY_PERCENT: 1.0,
+       }
+ - name: CC-MAIN-2020-50
+   sku: 8C64
+   priority: High
+   execution_mode: basic
+   azml_int: True
+   command: 
+   - python get_data_and_first_clean.py --path-id CC-MAIN-2020-50 --process-num 300 --output-dir /output/common_crawl
+   submit_args:
+      env:
+       {
+         SHARED_MEMORY_PERCENT: 1.0,
+       }
+ - name: CC-MAIN-2021-04
+   sku: 8C64
+   priority: High
+   execution_mode: basic
+   azml_int: True
+   command: 
+   - python get_data_and_first_clean.py --path-id CC-MAIN-2021-04 --process-num 300 --output-dir /output/common_crawl
+   submit_args:
+      env:
+       {
+         SHARED_MEMORY_PERCENT: 1.0,
+       }
+ - name: CC-MAIN-2021-10
+   sku: 8C64
+   priority: High
+   execution_mode: basic
+   azml_int: True
+   command: 
+   - python get_data_and_first_clean.py --path-id CC-MAIN-2021-10 --process-num 300 --output-dir /output/common_crawl
+   submit_args:
+      env:
+       {
+         SHARED_MEMORY_PERCENT: 1.0,
+       }
+ - name: CC-MAIN-2021-17
+   sku: 8C64
+   priority: High
+   execution_mode: basic
+   azml_int: True
+   command: 
+   - python get_data_and_first_clean.py --path-id CC-MAIN-2021-17 --process-num 300 --output-dir /output/common_crawl
+   submit_args:
+      env:
+       {
+         SHARED_MEMORY_PERCENT: 1.0,
+       }
+ - name: CC-MAIN-2021-21
+   sku: 8C64
+   priority: High
+   execution_mode: basic
+   azml_int: True
+   command: 
+   - python get_data_and_first_clean.py --path-id CC-MAIN-2021-21 --process-num 300 --output-dir /output/common_crawl
+   submit_args:
+      env:
+       {
+         SHARED_MEMORY_PERCENT: 1.0,
+       }
+ - name: CC-MAIN-2021-25
+   sku: 8C64
+   priority: High
+   execution_mode: basic
+   azml_int: True
+   command: 
+   - python get_data_and_first_clean.py --path-id CC-MAIN-2021-25 --process-num 300 --output-dir /output/common_crawl
+   submit_args:
+      env:
+       {
+         SHARED_MEMORY_PERCENT: 1.0,
+       }
+ - name: CC-MAIN-2021-31
+   sku: 8C64
+   priority: High
+   execution_mode: basic
+   azml_int: True
+   command: 
+   - python get_data_and_first_clean.py --path-id CC-MAIN-2021-31 --process-num 300 --output-dir /output/common_crawl
+   submit_args:
+      env:
+       {
+         SHARED_MEMORY_PERCENT: 1.0,
+       }
+ - name: CC-MAIN-2021-39
+   sku: 8C64
+   priority: High
+   execution_mode: basic
+   azml_int: True
+   command: 
+   - python get_data_and_first_clean.py --path-id CC-MAIN-2021-39 --process-num 300 --output-dir /output/common_crawl
+   submit_args:
+      env:
+       {
+         SHARED_MEMORY_PERCENT: 1.0,
+       }
+ - name: CC-MAIN-2021-43
+   sku: 8C64
+   priority: High
+   execution_mode: basic
+   azml_int: True
+   command: 
+   - python get_data_and_first_clean.py --path-id CC-MAIN-2021-43 --process-num 300 --output-dir /output/common_crawl
+   submit_args:
+      env:
+       {
+         SHARED_MEMORY_PERCENT: 1.0,
+       }
+ - name: CC-MAIN-2021-49
+   sku: 8C64
+   priority: High
+   execution_mode: basic
+   azml_int: True
+   command: 
+   - python get_data_and_first_clean.py --path-id CC-MAIN-2021-49 --process-num 300 --output-dir /output/common_crawl
+   submit_args:
+      env:
+       {
+         SHARED_MEMORY_PERCENT: 1.0,
+       }
+ - name: CC-MAIN-2022-05
+   sku: 8C64
+   priority: High
+   execution_mode: basic
+   azml_int: True
+   command: 
+   - python get_data_and_first_clean.py --path-id CC-MAIN-2022-05 --process-num 300 --output-dir /output/common_crawl
+   submit_args:
+      env:
+       {
+         SHARED_MEMORY_PERCENT: 1.0,
+       }
+ - name: CC-MAIN-2022-21
+   sku: 8C64
+   priority: High
+   execution_mode: basic
+   azml_int: True
+   command: 
+   - python get_data_and_first_clean.py --path-id CC-MAIN-2022-21 --process-num 300 --output-dir /output/common_crawl
+   submit_args:
+      env:
+       {
+         SHARED_MEMORY_PERCENT: 1.0,
+       }
+ - name: CC-MAIN-2022-27
+   sku: 8C64
+   priority: High
+   execution_mode: basic
+   azml_int: True
+   command: 
+   - python get_data_and_first_clean.py --path-id CC-MAIN-2022-27 --process-num 300 --output-dir /output/common_crawl
+   submit_args:
+      env:
+       {
+         SHARED_MEMORY_PERCENT: 1.0,
+       }
+ - name: CC-MAIN-2022-33
+   sku: 8C64
+   priority: High
+   execution_mode: basic
+   azml_int: True
+   command: 
+   - python get_data_and_first_clean.py --path-id CC-MAIN-2022-33 --process-num 300 --output-dir /output/common_crawl
+   submit_args:
+      env:
+       {
+         SHARED_MEMORY_PERCENT: 1.0,
+       }
+ - name: CC-MAIN-2022-40
+   sku: 8C64
+   priority: High
+   execution_mode: basic
+   azml_int: True
+   command: 
+   - python get_data_and_first_clean.py --path-id CC-MAIN-2022-40 --process-num 300 --output-dir /output/common_crawl
+   submit_args:
+      env:
+       {
+         SHARED_MEMORY_PERCENT: 1.0,
+       }

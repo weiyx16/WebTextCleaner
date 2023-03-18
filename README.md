@@ -1,4 +1,47 @@
-# C4 Dataset Script
+# Web Dataset Script
+
+## Pipeline
+
++ 0317: 
+    + Pick a select subset: 2020.50 CC (7.9TB source file)
++ Run Rule based first
+    + Rule-1 [done]
+    + Rule-2 [done]
+    + Rule-3 [done]
+    + Rule-4 [done]
+    + Rule-5 [==Rule-2]
+    + Rule-6 [done]
+    + Rule-7 [done]
+    + Rule-8 [done][double_check]
+    + Rule-9 [done]
+    + Rule-10 [TODO][double_check][how: By tokenizer?]
+    + Rule-11 [done]
+    + Rule-12 [==Rule-24]
+    + Rule-13 [done]
+    + Rule-14 [done]
+    + Rule-15 [done]
+    + Rule-16 [done]
+    + Rule-17 [done]
+    + Rule-18 [done]
+    + Rule-19 [done]
+    + Rule-20 [done]
+    + Rule-21 [done]
+    + Rule-22 [done]
+    + Rule-23 [pass]
+    + Rule-24 [done]
++ Check the lower/upper problem [done]
+
++ 0319
+    + Repeat Removal from Gopher
+    + Deduplication
+
++ 0320
+    + Linear Classifier
+
++ Others
+    + need random noise?
+
+## Original Readme
 
 [C4](https://www.tensorflow.org/datasets/catalog/c4) is a great way to get a colossal cleaned web corpus. Unfortunately, Google open-sourced c4 script highly depends on GCP and code mixed in a big repo. Therefore, it takes work to develop it freely. This repository extracts the processing logic and implements it to run on Spark. In addition, some helpful data process method in MassiveText is implemented in massivetext_utils.py.
 

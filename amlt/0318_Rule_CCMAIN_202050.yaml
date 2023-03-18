@@ -1,0 +1,46 @@
+description: clean data
+
+target:
+  service: sing
+  name: msrresrchvc
+
+environment:
+  image: amlt-sing/datacopy-adls #image: zeliu98/pytorch:pytorch1.8.1-py38-cuda11.3-cudnn820-openmpi-mmcv-apex-timm   #
+  setup:
+    - python -m pip install --upgrade pip --user
+    - pip install wget --user
+    - pip install numpy --user
+    - pip install re --user
+    - pip install gzip --user
+    - pip install tqdm --user
+    - pip install langdetect --user
+    - pip install nltk --user
+    - pip install ftfy --user
+    - pip install fasttext --user
+    - pip install spacy --user
+code:
+  # local directory of the code. this will be uploaded to the server.
+  # $CONFIG_DIR is expanded to the directory of this config file
+  local_dir: $CONFIG_DIR/
+
+storage:
+  # storage account and container where the ImageNet tar balls are contained
+  output:
+    storage_account_name: vlpretraineastus
+    container_name: crawl-text
+    mount_dir: /output
+
+jobs:
+ - name: CC-MAIN-2020-50
+   sku: 8C64
+   priority: High
+   execution_mode: basic
+   azml_int: True
+   command: 
+   - cd /tmp/code; git clone https://github.com/weiyx16/WebTextCleaner
+   - cd /tmp/code/WebTextCleaner; python main.py --path-id CC-MAIN-2020-50 --process-num 300 --output-dir /output/common_crawl_cleaned/202050_v20230318
+   submit_args:
+      env:
+       {
+         SHARED_MEMORY_PERCENT: 1.0,
+       }
