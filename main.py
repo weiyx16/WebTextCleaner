@@ -27,12 +27,15 @@ from multiprocessing import Process
 # languag detect
 from langdetect import detect_langs
 import fasttext
-wget.download('https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin', 'lib.176.bin')
-wget.download('https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.ftz', 'lib.176.ftz')
-LanDetectModel = fasttext.load_model('lid.176.bin')
+if not os.path.exists('lib.176.bin'):
+    wget.download('https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin', 'lib.176.bin')
+    wget.download('https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.ftz', 'lib.176.ftz')
+LanDetectModel = fasttext.load_model('lib.176.bin')
 
 # stop words
-from spacy.lang.en.stop_words import swb_spacy
+import spacy
+en = spacy.load('en_core_web_sm')
+swb_spacy = en.Defaults.stop_words
 from nltk.corpus import stopwords as swb_nltk
 from RuleBased.stopwords_bloom import stopwords as swb_bloom
 
@@ -51,7 +54,7 @@ swb_custom = ['(', ')', '\'', '"', '[', ']', ',', '.', '“', '``', "''",
 STOP_WORDS = swb_spacy | set(
     swb_nltk.words('english')) | set(swb_bloom['en'])
 
-STOP_WORDS_FREQ = set('the', 'be', 'to', 'of', 'and', 'that', 'have', 'with')
+STOP_WORDS_FREQ = set(['the', 'be', 'to', 'of', 'and', 'that', 'have', 'with'])
 
 # --------------
 # HYPERPARAMETERS
@@ -69,8 +72,8 @@ WORD_WITH_ALPHABETIC = 0.8 # the min ratio that for each word with at least one 
 CODE_WEBPAGE_FLAG = [r'{', r'<', r'lorem ipsum'] ## TODO: DOUBLE CHECK: we may want to keep the pages like stack overflow which may contains code
 MAX_CODE_WEBPAGE_COUNT = 2 # code webpage flag appears > MAX_CODE_WEBPAGE_COUNT, the document will be filtered
 RANDOM_CASES = 0.0 # leave some noise code TODO: check will should we add it
-isZH = set('zh', 'zh-cn', 'zh-tw', 'ko', 'ja')    
-bad_tokens = ['http:','https:', '.com', '@', 'javascrip','|', '©', '&', '﻿', '', '｜']
+isZH = set(['zh', 'zh-cn', 'zh-tw', 'ko', 'ja'])    
+bad_tokens = ['http:','https:', '.com', '@', 'javascript','|', '©', '&', '﻿', '', '｜']
 # --------------
 
 
@@ -129,7 +132,7 @@ class match_filter():
         for w in STOP_WORDS:
             stop_word_count += texts.count(w)
         stop_word_freq_count = 0
-        for w in STOP_WORD_COUNT:
+        for w in STOP_WORDS_FREQ:
             stop_word_freq_count += texts.count(w)
         total_words = get_len(texts, lang)
         if total_words == 0:
@@ -160,10 +163,10 @@ class match_filter():
         list_of_texts = set(get_word_list(texts, lang))
         for w in self.badwords_en:
             if blank(lang) and w in list_of_texts:
-                return True
+                return False
             if not blank(lang) and w in texts:
-                return True
-        return False
+                return False
+        return True
     
 MF = match_filter()
 
@@ -171,6 +174,7 @@ MF = match_filter()
 def get_args_parser():
     parser = argparse.ArgumentParser('get information', add_help=False)
     parser.add_argument('--path-id', default='', type=str)
+    parser.add_argument('--subset', default='0/1', type = str, help='x/y means the xth subset in y subsets')
     parser.add_argument('--process-num', default=1, type=int)
     parser.add_argument('--tmp-dir', default='./tmp', type = str)
     parser.add_argument('--output-dir', default='./output', type = str)
@@ -337,7 +341,7 @@ def document_filter(doc):
     # Rule-7&8: remove the web page if it contains "{" or "<"; TODO: double check
     texts = '\n'.join(doc)
     for w in CODE_WEBPAGE_FLAG:
-        if texts.count(w) > MAX_CODE_WEBPAGE_COUNT:
+        if texts.lower().count(w) > MAX_CODE_WEBPAGE_COUNT:
             return None, False
         
     # Rule-1: language detection: notice that we only reserve en samples
@@ -355,9 +359,10 @@ def document_filter(doc):
     for Ele in doc:
         ele = Ele.lower()
         sent_length = get_len(ele, lang)
+        # Rule-4: skip if the sentence is too short
         if sent_length >= MIN_SENTENCE_LENGTH:
             # Rule-6: filter out javascript in sentence
-            if 'javascript' not in ele:
+            if language_detect(Ele) and 'javascript' not in ele:
                 # Rule-11: web code 
                 if not any(w in ele for w in bad_tokens):
                     # Rule-3: end with termination.
@@ -370,7 +375,7 @@ def document_filter(doc):
                                 tokensWithAlphabetic += 1
 
                         # Rule-9&15: when three lines are the same, pop one
-                        if (ele == filtered_doc[-1] and ele == filtered_doc[-2]) or (jaccard_distance(ele, filtered_doc[-1]) > JAC_MIN and jaccard_distance(ele, filtered_doc[-2]) > JAC_MIN):
+                        if (ele == filtered_doc[-1] and ele == filtered_doc[-2]) or (jaccard_distance(ele, filtered_doc[-1], lang) > JAC_MIN and jaccard_distance(ele, filtered_doc[-2], lang) > JAC_MIN):
                             # pop one line
                             popline = filtered_doc[-1]
                             filtered_doc = filtered_doc[:-1]
@@ -381,7 +386,7 @@ def document_filter(doc):
                             filtered_doc.append(Ele.strip().capitalize())
                             total_tokens += sent_length
                             total_characters += get_character_len(ele, lang)
-    
+    filtered_doc = filtered_doc[2:] # pop the first two placehold
 
     # Rule-17: document token words
     if total_tokens < DOCUMENT_LENGTH_RANGE[0] or total_tokens > DOCUMENT_LENGTH_RANGE[1]:
@@ -404,6 +409,7 @@ def document_filter(doc):
     endWithEllipsis = 0
     EllipsisCount = 0
     HashCount = 0
+    filtered_cleaned_doc = []
     for ele in filtered_doc:
         if ele.endswith('...'):
             endWithEllipsis += 1
@@ -411,16 +417,19 @@ def document_filter(doc):
             beginWithBullet += 1
         EllipsisCount += ele.count('...')
         HashCount += ele.count('#')
+        # Rule-13/14: line cleaning
+        ele = text_clean(ele)
+        filtered_cleaned_doc.append(ele)
     if beginWithBullet > BWBullet * len(filtered_doc) or endWithEllipsis > EWEllipsis * len(filtered_doc):
         return None, False
     if EllipsisCount > SymbolRatio * total_tokens or HashCount > SymbolRatio * total_tokens:
         return None, False
 
-    texts = '\n'.join(filtered_doc)
-    if MF.stop_word_removal(texts, lang[:2]):
+    texts = '\n'.join(filtered_cleaned_doc)
+    if not MF.stop_word_removal(texts, lang[:2]):
         # rule-22&24
         return None, False
-    if MF.flagged_word_removal(texts, lang[:2]):
+    if not MF.flagged_word_removal(texts, lang[:2]):
         # rule-2
         return None, False
     return lang, texts
@@ -477,9 +486,11 @@ def detect_and_clean(tmp_f, tgt_f):
             os.makedirs(pre_path)
         with open(langp, 'w') as f:
             for blocks in tblocks:
-                if len(blocks) > 3:
-                    f.writelines([l + '\n' for l in blocks])
-                    f.writelines(['\n', '\n'])
+                # if len(blocks) > 3:
+                #     f.writelines([l + '\n' for l in blocks])
+                #     f.writelines(['\n', '\n'])
+                f.writelines(blocks)
+                f.writelines(['\n', '\n'])
     return 
 
 
@@ -510,14 +521,22 @@ def get_args(args, i):
     out_args = dict()
     out_args['tmp_dir'] = args.tmp_dir
     main_process = i==0
+
     # fetch all pragent files
     files = open(os.path.join('data', args.path_id), 'r').readlines()
+    xth, ytotal = list(map(lambda x: int(x),  args.subset.split('/')))
+    assert xth < ytotal, f"xth should be smaller than ytotal: subset = {args.subset}"
+    files_per_subset = len(files) // ytotal + 1
+    files = files[xth * files_per_subset, min((xth+1) * files_per_subset, len(files))]
+    if main_process:
+        print("per subset files:", len(files))
+    
     files_per_process = len(files) // args.process_num + 1
     if main_process:
         print("per process files:", files_per_process)
 
     # fetch file ids for current process
-    process_files = files[i*files_per_process: (i+1)*files_per_process]
+    process_files = files[i*files_per_process: min((i+1)*files_per_process, len(files))]
     out_args['files_to_download'] = ['https://data.commoncrawl.org/'+f.strip('\n') for f in process_files]
     f_id = [f.split('/')[-1].split('.')[0] for f in process_files]
     # if not os.path.exists(os.path.join(args.output_dir, args.path_id)):

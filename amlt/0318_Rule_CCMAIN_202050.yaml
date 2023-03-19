@@ -37,6 +37,7 @@ jobs:
    execution_mode: basic
    azml_int: True
    command: 
+   - python -m spacy download en
    - cd /tmp/code; git clone https://github.com/weiyx16/WebTextCleaner
    - cd /tmp/code/WebTextCleaner; python main.py --path-id CC-MAIN-2020-50 --process-num 300 --output-dir /output/common_crawl_cleaned/202050_v20230318
    submit_args:
