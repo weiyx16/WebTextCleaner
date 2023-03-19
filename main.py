@@ -504,7 +504,8 @@ def main(files_to_download, tmp_dir, target_path, is_main):
     """
     iterator = tqdm(enumerate(files_to_download)) if is_main else enumerate(files_to_download)
     for i, f in iterator:
-        fs = target_path[i].split("/").insert(-2, 'en')  # we hard code with en
+        fs = target_path[i].split("/")
+        fs.insert(-2, 'en')  # we hard code with en
         fs_path = '/'.join(fs)
         if os.path.exists(fs_path):
             print(f"skip; already found for {target_path[i]}")
