@@ -188,8 +188,8 @@ def download_and_unzip(url, tmp_dir):
         try:
             wget.download(url, tmp_f+'.gz')
             downloaded = True
-        except:
-            print("attempt error, retry" + str(attempt))
+        except Exception as e:
+            print(f"attempt error {e}" + ", retry" + str(attempt))
         else:
             break
     if downloaded:
@@ -504,6 +504,11 @@ def main(files_to_download, tmp_dir, target_path, is_main):
     """
     iterator = tqdm(enumerate(files_to_download)) if is_main else enumerate(files_to_download)
     for i, f in iterator:
+        fs = target_path[i].split("/").insert(-2, 'en')  # we hard code with en
+        fs_path = '/'.join(fs)
+        if os.path.exists(fs_path):
+            print(f"skip; already found for {target_path[i]}")
+            continue
         tmp_file_name = download_and_unzip(f, tmp_dir)
         if tmp_file_name == 'Failed':
             print("error happened in downloading file", f, " we will skipping it.")
