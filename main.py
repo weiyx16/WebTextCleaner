@@ -450,7 +450,7 @@ def detect_and_clean(tmp_f, tgt_f):
     blocks = f.split('WARC/1.0')
 
     tgt_blocks = dict()
-    for b in tqdm(blocks):
+    for b in tqdm(blocks, total=100):
         info_content = b.strip().split('\n\n')
         if not len(info_content) == 2:
             # a standard block for content should have 2 parts
