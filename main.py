@@ -527,7 +527,7 @@ def get_args(args, i):
     xth, ytotal = list(map(lambda x: int(x),  args.subset.split('/')))
     assert xth < ytotal, f"xth should be smaller than ytotal: subset = {args.subset}"
     files_per_subset = len(files) // ytotal + 1
-    files = files[xth * files_per_subset, min((xth+1) * files_per_subset, len(files))]
+    files = files[xth * files_per_subset: min((xth+1) * files_per_subset, len(files))]
     if main_process:
         print("per subset files:", len(files))
     
