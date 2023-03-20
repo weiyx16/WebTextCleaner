@@ -16,6 +16,7 @@ import re
 import wget
 import json
 import gzip
+import time
 import html
 import ftfy
 import random
@@ -190,6 +191,7 @@ def download_and_unzip(url, tmp_dir):
             downloaded = True
         except Exception as e:
             print(f"attempt error {e}" + ", retry" + str(attempt))
+            time.sleep(5)
         else:
             break
     if downloaded:
@@ -536,7 +538,21 @@ def get_args(args, i):
     files = files[xth * files_per_subset: min((xth+1) * files_per_subset, len(files))]
     if main_process:
         print("per subset files:", len(files))
-    
+
+    # filter out the ones we already downloaded
+    files_noloaded = []
+    for f in files:
+        f_id = f.split('/')[-1].split('.')[0]
+        fs_path = os.path.join(args.output_dir, args.path_id, 'en', f+'.txt') # we hard code with en
+        if os.path.exists(fs_path):
+            print(f"skip; already found for {f_id}")
+        else:
+            files_noloaded.append(f)
+    if main_process:
+        print("per subset files after filter out downloaded ones:", len(files_noloaded))
+
+    # split among processes
+    files = files_noloaded
     files_per_process = len(files) // args.process_num + 1
     if main_process:
         print("per process files:", files_per_process)
