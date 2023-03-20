@@ -5,6 +5,7 @@
         1. Download the dataset
         2. Filter the dataset with rule-based filtering
         3. Clean the cached files
+    WARNING: We largely assume we are process EN corpus, including saving_path and rules design.
 """
 
 import nltk
@@ -543,7 +544,7 @@ def get_args(args, i):
     files_noloaded = []
     for f in files:
         f_id = f.split('/')[-1].split('.')[0]
-        fs_path = os.path.join(args.output_dir, args.path_id, 'en', f+'.txt') # we hard code with en
+        fs_path = os.path.join(args.output_dir, args.path_id, 'en', f_id+'.txt') # we hard code with en
         if os.path.exists(fs_path):
             print(f"skip; already found for {f_id}")
         else:
