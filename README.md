@@ -2,44 +2,79 @@
 
 ## Pipeline
 
-+ 0317: 
-    + Pick a select subset: 2020.50 CC (7.9TB source file)
-+ Run Rule based first
-    + Rule-1 [done]
-    + Rule-2 [done]
-    + Rule-3 [done]
-    + Rule-4 [done]
-    + Rule-5 [==Rule-2]
-    + Rule-6 [done]
-    + Rule-7 [done]
-    + Rule-8 [done][double_check]
-    + Rule-9 [done]
-    + Rule-10 [TODO][double_check][how: By tokenizer?]
-    + Rule-11 [done]
-    + Rule-12 [==Rule-24]
-    + Rule-13 [done]
-    + Rule-14 [done]
-    + Rule-15 [done]
-    + Rule-16 [done]
-    + Rule-17 [done]
-    + Rule-18 [done]
-    + Rule-19 [done]
-    + Rule-20 [done]
-    + Rule-21 [done]
-    + Rule-22 [done]
-    + Rule-23 [pass]
-    + Rule-24 [done]
-+ Check the lower/upper problem [done]
++ 0317  
+    + Pick a select subset: 2020.50 CC (7.9TB source file)  
+    + Writing Rules
+        + Rule-1 [done] 
+        + Rule-2 [done]
+        + Rule-3 [done]
+        + Rule-4 [done]
+        + Rule-5 [==Rule-2]
+        + Rule-6 [done]
+        + Rule-7 [done]
+        + Rule-8 [done][double_check]
+        + Rule-9 [done]
+        + Rule-10 [TODO][double_check][how: By tokenizer?]
+        + Rule-11 [done]
+        + Rule-12 [==Rule-24]
+        + Rule-13 [done]
+        + Rule-14 [done]
+        + Rule-15 [done]
+        + Rule-16 [done]
+        + Rule-17 [done]
+        + Rule-18 [done]
+        + Rule-19 [done]
+        + Rule-20 [done]
+        + Rule-21 [done]
+        + Rule-22 [done]
+        + Rule-23 [pass]
+        + Rule-24 [done]
+        + Rule-25 [done]
+    + Check the lower/upper problem [done]
 
-+ 0319
-    + Repeat Removal from Gopher
-    + Deduplication
++ 0319  
+    + Summary and compare ruleset-1/2/3/4 and double check code (e.g. add langdetect for each line) [done]
+    + Check results from first 5k subsubset [done]
+    + Subset support [done]
+    + **Submit** CC202050 Rule0318 Subset\[0/4\] [done]
+        + 1/4 subset; 8C64(Eadsv5) ~ 7h
+        + should : 18000 subsets; final: 6970 subsets; total: ~140G
+        + Rerun for the left: 18000 subsets; final: 13060 subsets; total: ~260G; the error is `HTTP Error 503: Service Unavailable`
+        + ReRerun for the left: 
+    + Double check the current performances with 1.4B + 5GB data like Gopher [todo]
+    + Split OSCAR2201 and Other202050 [todo]
+    + Split ours [todo]
+    + Repeat Removal from Gopher [todo]
+    + Deduplication [todo]  
 
-+ 0320
++ 0320  
     + Linear Classifier
 
-+ Others
-    + need random noise?
++ Others  
+    + need random noise?  
+
++ Other Sources
+    + Github  
+    + Wikipedia  
+    + Pile-of-Law  
+
+> Compute
+```bash
+TARGET_NAME    RESOURCE_GROUP          SUBSCRIPTION             SERIES
+-------------  ----------------------  -----------------------  -------------------------------------------
+msroctovc      gcr-singularity-octo    Singularity Shared OCTO  NDv2g1
+msrresrchvc    gcr-singularity-resrch  Singularity Shared       Eadsv5, Ev3, NCv2, NCv3, ND, NDAMv4, NDv2g1
+
+SERIES    ASSOCIATED_TYPES
+--------  ----------------------------------------------------
+Eadsv5    8C4, 8C8, 8C16, 8C20, 8C32, 8C48, 8C64
+Ev3       8C1, 8C2, 8C4, 8C8, 8C16, 8C32
+NCv2      16G1-P100, 16G2-P100, 16G4-P100, 16G4-P100-IB
+NCv3      16G1-V100, 16G2-V100, 16G4-V100, 16G4-V100-IB
+ND        24G1-P40, 24G2-P40, 24G4-P40, 24G4-P40-IB
+NDAMv4    80G1-A100, 80G2-A100, 80G4-A100, 80G8-A100-IB-NvLink
+NDv2g1    16G1-V100, 16G2-V100, 16G4-V100, 16G8-V100
+```
 
 ## Original Readme
 
