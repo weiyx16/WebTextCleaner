@@ -546,7 +546,8 @@ def get_args(args, i):
         f_id = f.split('/')[-1].split('.')[0]
         fs_path = os.path.join(args.output_dir, 'en', args.path_id, f_id+'.txt') # we hard code with en
         if os.path.exists(fs_path):
-            print(f"skip; already found for {f_id}")
+            # print(f"skip; already found for {f_id}")
+            pass
         else:
             files_noloaded.append(f)
     if main_process:
