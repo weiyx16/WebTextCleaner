@@ -406,7 +406,7 @@ def document_filter(doc):
         ele = ele.strip('\n').strip(' ')
         if ele.endswith('...'):
             endWithEllipsis += 1
-        if ele.startswith('*') or ele.startswith('+') or ele.startswith('-') or ele.startswith('#') or ele.startswith('>'):
+        if ele.startswith('*') or ele.startswith('+') or ele.startswith('-') or ele.startswith('#') or ele.startswith('>') or ele.startswith('►'):
             beginWithBullet += 1
         EllipsisCount += ele.count('...')
         HashCount += ele.count('#')
