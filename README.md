@@ -1,12 +1,17 @@
 # Web Dataset Script
 
+## Key Usage:
++ 0318 version Rules based clean:  
+    `python main.py --path-id CC-MAIN-2020-50 --process-num 60 --output-dir /output/common_crawl_cleaned/202050_v20230318_subset3of4 --subset 3/4`
++ 0321 version With rules better reviewed: ruleset-1 an ruleset-2
+
 ## Pipeline
 
 + 0317  
     + Pick a select subset: 2020.50 CC (7.9TB source file)  
     + Writing Rules
         + Rule-1 [done] 
-        + Rule-2 [done]
+        + Rule-2 [done][double_check, is that too general? like sex/shit]
         + Rule-3 [done]
         + Rule-4 [done]
         + Rule-5 [==Rule-2]
@@ -32,7 +37,7 @@
         + Rule-25 [done]
     + Check the lower/upper problem [done]
 
-+ 0319  
++ 0319-0321  
     + Summary and compare ruleset-1/2/3/4 and double check code (e.g. add langdetect for each line) [done]
     + Check results from first 5k subsubset [done]
     + Subset support [done]
@@ -40,15 +45,26 @@
         + 1/4 subset; 8C64(Eadsv5) ~ 7h
         + should : 18000 subsets; final: 6970 subsets; total: ~140G
         + Rerun for the left: 18000 subsets; final: 13060 subsets; total: ~260G; the error is `HTTP Error 503: Service Unavailable`
-        + ReRerun for the left: 
+        + ReRerun for the left: 18000 subsets; final: 16783 subsets; total: ~336G; 
     + Double check the current performances with 1.4B + 5GB data like Gopher [todo]
-    + Split OSCAR2201 and Other202050 [todo]
-    + Split ours [todo]
-    + Repeat Removal from Gopher [todo]
-    + Deduplication [todo]  
+    + Split OSCAR2201 and Other202050 [done]
+        + Run GPT on theirs [done]
+    + Split ours [done]
+        + Run GPT on ours 0of4 [done]
+        + Why the validation loss is so high?
+            + Subset Effect: run on 2of4: not the reason [done]
+            + Do some unit test first. [done]
+            + Simply the rule set with different parts and validate it one-by-one. 
+                + Improved Ruleset-1 : normal [done]
+                + Improved Ruleset-2 : normal [done]
 
-+ 0320  
-    + Linear Classifier
+    + Repeat Removal from Gopher [todo][skip it]
+    + Linear Classifier [todo][skip it]
+
+
++ 0322 
+    + Deduplication: among train [todo]  
+    + Deduplication: train v.s. test [todo]  
 
 + Others  
     + need random noise?  
