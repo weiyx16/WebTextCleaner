@@ -5,13 +5,14 @@ target:
   name: msrresrchvc
 
 environment:
-  image: amlt-sing/datacopy-adls #image: zeliu98/pytorch:pytorch1.8.1-py38-cuda11.3-cudnn820-openmpi-mmcv-apex-timm   #
+  # image: amlt-sing/datacopy-adls # disappeared
+  # image: python:3.9-buster # seems amlt doesn't support it
+  image: amlt-sing/pytorch-1.8.0-cuda11.1-cudnn8-devel
   setup:
     - python -m pip install --upgrade pip --user
     - pip install wget --user
     - pip install numpy --user
-    - pip install re --user
-    - pip install gzip --user
+    - pip install regex --user
     - pip install tqdm --user
     - pip install langdetect --user
     - pip install nltk --user
@@ -31,7 +32,7 @@ storage:
     mount_dir: /output
 
 jobs:
- - name: CC-MAIN-2020-50
+ - name: $JOB_NAME
    sku: 8C64
    priority: High
    execution_mode: basic
@@ -39,7 +40,9 @@ jobs:
    command: 
    - python -m spacy download en
    - cd /tmp/code; git clone https://github.com/weiyx16/WebTextCleaner
-   - cd /tmp/code/WebTextCleaner; python main.py --path-id CC-MAIN-2020-50 --process-num 300 --output-dir /output/common_crawl_cleaned/202050_v20230318
+   - cd /tmp/code/WebTextCleaner; python main_ruleset12_0321.py --path-id CC-MAIN-2020-50 --process-num 60 --output-dir /output/common_crawl_cleaned/202050_v20230321_ruleset12_subset0of8 --subset 0/8
+   - cd /tmp/code/WebTextCleaner; python main_ruleset12_0321.py --path-id CC-MAIN-2020-50 --process-num 60 --output-dir /output/common_crawl_cleaned/202050_v20230321_ruleset12_subset0of8 --subset 0/8
+   - cd /tmp/code/WebTextCleaner; python main_ruleset12_0321.py --path-id CC-MAIN-2020-50 --process-num 60 --output-dir /output/common_crawl_cleaned/202050_v20230321_ruleset12_subset0of8 --subset 0/8
    submit_args:
       env:
        {
