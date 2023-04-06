@@ -10,7 +10,7 @@
     NOTICE: it's a subset of main.py, which is used to process the data with rule-based filtering with some basic rules.
     Including Rule-1: language; Rule-2/5: toxic rules; Rule-4/17: pages too long/short; Rule-7/8/19/20/21: Page with too much Codes.
     Including Rule-2: constrain the ends/stop words Rule-3/12/22/24; remove codes: Rule-6/11; constrain average word length: Rule-18
-    Including Rule-3&4: local dedup: Rule-9/15; cleaning text and table: Rule-13/14/16/25
+    It seems in 0321 version; Rule-3&11 is not in effect? So we make it in effect in 0406 version.
 """
 
 import nltk
@@ -387,18 +387,9 @@ def document_filter(doc):
                             if len(_token) > 0:
                                 tokensWithAlphabetic += 1
 
-                        # Rule-9&15: when three lines are the same, pop one
-                        if (ele == filtered_doc[-1] and ele == filtered_doc[-2]) or (jaccard_distance(ele, filtered_doc[-1], lang) > JAC_MIN and jaccard_distance(ele, filtered_doc[-2], lang) > JAC_MIN):
-                            # pop one line
-                            popline = filtered_doc[-1]
-                            filtered_doc = filtered_doc[:-1]
-                            total_tokens -= get_len(popline, lang)
-                            total_characters -= get_character_len(popline, lang)
-                        else:
-                            # Rule-14: uppercase the first characteristic
-                            filtered_doc.append(Ele.strip().capitalize())
-                            total_tokens += sent_length
-                            total_characters += get_character_len(ele, lang)
+                        filtered_doc.append(Ele)
+                        total_tokens += sent_length
+                        total_characters += get_character_len(ele, lang)
     filtered_doc = filtered_doc[2:] # pop the first two placehold
     
     # Rerun Rule-4: skip if the web page is too short after sentence cleaned
@@ -416,9 +407,6 @@ def document_filter(doc):
     # Rule-21: words with alphabet
     if tokensWithAlphabetic < total_tokens * WORD_WITH_ALPHABETIC:
         return None, False
-    
-    # Rule-14: remove the tables
-    filtered_doc = clean_table(filtered_doc, lang)
 
     # Rule-20: not too much begin with bullet and end with ellipsis
     # Rule-19: symbol-to-word ratio
@@ -435,8 +423,6 @@ def document_filter(doc):
             beginWithBullet += 1
         EllipsisCount += ele.count('...')
         HashCount += ele.count('#')
-        # Rule-13/14: line cleaning
-        ele = text_clean(ele)
         filtered_cleaned_doc.append(ele)
     if beginWithBullet > BWBullet * len(filtered_doc) or endWithEllipsis > EWEllipsis * len(filtered_doc):
         return None, False
